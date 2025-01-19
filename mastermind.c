@@ -38,14 +38,16 @@ typedef struct Button
 typedef struct Peg
 {
     Rectangle rect;
-    Color color;
+    Rectangle border;
+    Color pegColor;
+    Color borderColor;
 } Peg;
 
 typedef struct Board
 {
     Button rectangularGuessButtons[4];
     Rectangle background;
-    Peg peg[4];
+    Peg pegs[4];
     bool isActive;
 } Board;
 
@@ -156,6 +158,12 @@ bool IsInButton(Vector2 position, Button button)
     }
 
     return false;
+}
+
+void DrawPeg(Peg peg)
+{
+    DrawRectangleRec(peg.border, peg.borderColor);
+    DrawRectangleRec(peg.rect, peg.pegColor);
 }
 
 void DrawButton (Button button)
@@ -311,7 +319,26 @@ int main(void)
             boardSegment.rectangularGuessButtons[j].textY = 0;
             boardSegment.rectangularGuessButtons[j].guessColor = EMPTY_GUESS;
 
-            //boardSegment.peg = CreateRectangle(pegX, pegY, pegWidth, pegHeight);
+            int pegWidth = (boardWidth/5)/2;
+            int pegHeight = boardHeight/2;
+            for(int k = 0; k < 4; k++)
+            {
+                int pegX = boardX + boardWidth/5*4;
+                if(k % 2 == 1)
+                {
+                    pegX += pegWidth;
+                }
+                int pegY = screenHeight - (i+1)*boardHeight;
+                if(k > 1)
+                {
+                    pegY += pegHeight;
+                }
+                boardSegment.pegs[k].border = CreateRectangle(pegX, pegY, pegWidth, pegHeight);
+                boardSegment.pegs[k].borderColor = GRAY;
+                boardSegment.pegs[k].rect = CreateRectangle(pegX + pegWidth*5/100, pegY + pegHeight*5/100, pegWidth*9/10, pegHeight*9/10);
+                boardSegment.pegs[k].pegColor = PINK;
+
+            }
 
         }
         playableBoard[i] = boardSegment;
@@ -562,8 +589,7 @@ int main(void)
                         for(int j = 0; j < 4; j++)
                         {
                             DrawButton(playableBoard[i].rectangularGuessButtons[j]);
-                            // Uncomment when peg code is done being initialized
-                            // DrawRectangleRec(playableBoard[i].peg[j].rect, playableBoard[i].peg[j].color);
+                            DrawPeg(playableBoard[i].pegs[j]);
                         }
                     }
 

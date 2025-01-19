@@ -283,7 +283,7 @@ int main(void)
         solutionBoard.rectangularGuessButtons[i].type = GUESS_INPUT;
         solutionBoard.rectangularGuessButtons[i].buttonRect = CreateRectangle(boardX +boardWidth/5*i, 0, boardWidth/5, boardHeight);
         solutionBoard.rectangularGuessButtons[i].borderThicknessValue = 5;
-        solutionBoard.rectangularGuessButtons[i].innerRect = CreateRectangle(solutionBoard.rectangularGuessButtons[i].buttonRect.x + solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.y + solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.width - 2*solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.height - 2*solutionBoard.rectangularGuessButtons[i].borderThicknessValue);                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+        solutionBoard.rectangularGuessButtons[i].innerRect = CreateRectangle(solutionBoard.rectangularGuessButtons[i].buttonRect.x + solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.y + solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.width - 2*solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.height - 2*solutionBoard.rectangularGuessButtons[i].borderThicknessValue);
         solutionBoard.rectangularGuessButtons[i].isRectBordered = true;
         solutionBoard.rectangularGuessButtons[i].buttonCircle = CreateCircle(0,CreateVector2(0,0)); // Not A Circle
         solutionBoard.rectangularGuessButtons[i].activeColor = WHITE;
@@ -294,7 +294,7 @@ int main(void)
         solutionBoard.rectangularGuessButtons[i].fontColor = BLACK;
         solutionBoard.rectangularGuessButtons[i].textX = 0;
         solutionBoard.rectangularGuessButtons[i].textY = 0;
-        solutionBoard.rectangularGuessButtons[i].guessColor = 0;
+        solutionBoard.rectangularGuessButtons[i].guessColor = i;
     }
     Board playableBoard[PLAYABLE_BOARD_SEGMENT_COUNT];
     for (int i = 0; i < PLAYABLE_BOARD_SEGMENT_COUNT; i++)
@@ -520,6 +520,21 @@ int main(void)
                 // Process a confirmed move
                 if(moveConfirmed)
                 {
+                    GuessColor solutionColors[4];
+                    GuessColor guessedColors[4];
+                    int solutionColorsLength = 4;
+                    int guessedColorsLength = 4;
+                    for(int i=0; i < 4; i++)
+                    {
+                        solutionColors[i] = solutionBoard.rectangularGuessButtons[i].guessColor;
+                        guessedColors[i] = activeBoardSegment->rectangularGuessButtons[i].guessColor;
+
+                    }
+
+                    // Check red pegs
+                    
+                    // Then check white pegs
+                    
                     turnCount++;
                     moveConfirmed = false;
                 }

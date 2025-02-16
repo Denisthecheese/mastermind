@@ -524,6 +524,8 @@ int main(void)
                     GuessColor guessedColors[4];
                     int solutionColorsLength = 4;
                     int guessedColorsLength = 4;
+                    int redPegCount = 0;
+                    int whitePegCount = 0;
                     for(int i=0; i < 4; i++)
                     {
                         solutionColors[i] = solutionBoard.rectangularGuessButtons[i].guessColor;
@@ -532,9 +534,69 @@ int main(void)
                     }
 
                     // Check red pegs
-                    
+                    int i = 0;
+                    while(i<guessedColorsLength && i<solutionColorsLength)
+                    {
+                        if(guessedColors[i] == solutionColors[i])
+                        {
+                            for(int j = i+1; j < solutionColorsLength; j++)
+                            {
+                                solutionColors[j-1] = solutionColors[j];
+                                guessedColors[j-1] = guessedColors[j];
+                            }
+                            solutionColorsLength--;
+                            guessedColorsLength--;
+                            redPegCount++;
+                        }
+                        else
+                        {
+                            i++;
+                        }
+                    }
                     // Then check white pegs
-                    
+                    i = 0;
+                    int j = 0;
+                    while(i<guessedColorsLength)
+                    {
+                        while(j<solutionColorsLength)
+                        {
+                            if(guessedColors[i] == solutionColors[j])
+                            {
+                                for(int k = i+1; k < guessedColorsLength; k++)
+                                {
+                                    guessedColors[k-1] = guessedColors[k];
+                                }
+                                for(int k = j+1; k < solutionColorsLength; k++)
+                                {
+                                    solutionColors[k-1] = solutionColors[k];
+                                }
+                                guessedColorsLength--;
+                                solutionColorsLength--;
+                                j = 0;
+                                whitePegCount++;
+                            }
+                            else
+                            {
+                                j++;
+                            }
+                        }
+                        i++;
+                    }
+
+                    // fill in the pegs on the active board segment
+                    for(int i = 0; i < 4; i++)
+                    {
+                        if(redPegCount > 0)
+                        {
+                            activeBoardSegment->pegs[i].pegColor = RED;
+                            redPegCount--;
+                        }
+                        else if(whitePegCount > 0)
+                        {
+                            activeBoardSegment->pegs[i].pegColor = WHITE;
+                            whitePegCount--;
+                        }
+                    }
                     turnCount++;
                     moveConfirmed = false;
                 }

@@ -644,6 +644,9 @@ int main(void)
                         playableBoard[i] = InitializePlayableBoardSegment(boardX, boardWidth, boardHeight, i, screenHeight);
                     }
                     currentScreen = TITLE;
+                    gameOver = false;
+                    turnCount = 0;
+                    playerWon = false;
                 }
             } break;
             default: break;

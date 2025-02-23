@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------------------
 // Types and Structures Definition
 //------------------------------------------------------------------------------------------
-#define PLAYABLE_BOARD_SEGMENT_COUNT 16
+#define PLAYABLE_BOARD_SEGMENT_COUNT 18
 
 typedef enum GameScreen {LOGO = 0, TITLE, GAMEPLAY, ENDING} GameScreen;
 typedef enum GuessColor {RED_GUESS = 0, ORANGE_GUESS, YELLOW_GUESS, GREEN_GUESS, BLUE_GUESS, PURPLE_GUESS, COUNT_GUESS, EMPTY_GUESS} GuessColor;
@@ -690,11 +690,6 @@ int main(void)
                     for(int i = 0; i < screenButtonCount; i++)
                     {
                         DrawButton(screenButtons[i]);
-                    }
-
-                    for(int i = 0; i < 4; i++)
-                    {
-                        DrawButton(solutionBoard.rectangularGuessButtons[i]);
                     }
 
                     for(int i = 0; i < PLAYABLE_BOARD_SEGMENT_COUNT; i++)

@@ -3,10 +3,10 @@
 //------------------------------------------------------------------------------------------
 // Types and Structures Definition
 //------------------------------------------------------------------------------------------
-#define PLAYABLE_BOARD_SEGMENT_COUNT 12
+#define PLAYABLE_BOARD_SEGMENT_COUNT 16
 
 typedef enum GameScreen {LOGO = 0, TITLE, GAMEPLAY, ENDING} GameScreen;
-typedef enum GuessColor {RED_GUESS, ORANGE_GUESS, YELLOW_GUESS, GREEN_GUESS, BLUE_GUESS, PURPLE_GUESS, COUNT_GUESS, EMPTY_GUESS} GuessColor;
+typedef enum GuessColor {RED_GUESS = 0, ORANGE_GUESS, YELLOW_GUESS, GREEN_GUESS, BLUE_GUESS, PURPLE_GUESS, COUNT_GUESS, EMPTY_GUESS} GuessColor;
 typedef enum ButtonShape {RECTANGLE, CIRCLE} ButtonShape;
 typedef enum ButtonType {CONFIRM, COLORSELECT, GUESS_INPUT} ButtonType;
 typedef struct Circle
@@ -212,6 +212,77 @@ void DrawButton (Button button)
 
 }
 
+Board InitializeSolutionBoard (int boardX, int boardWidth, int boardHeight)
+{
+    Board solutionBoard;
+    for(int i = 0; i < 4; i++)
+    {
+        solutionBoard.rectangularGuessButtons[i].shape = RECTANGLE;
+        solutionBoard.rectangularGuessButtons[i].type = GUESS_INPUT;
+        solutionBoard.rectangularGuessButtons[i].buttonRect = CreateRectangle(boardX +boardWidth/5*i, 0, boardWidth/5, boardHeight);
+        solutionBoard.rectangularGuessButtons[i].borderThicknessValue = 5;
+        solutionBoard.rectangularGuessButtons[i].innerRect = CreateRectangle(solutionBoard.rectangularGuessButtons[i].buttonRect.x + solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.y + solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.width - 2*solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.height - 2*solutionBoard.rectangularGuessButtons[i].borderThicknessValue);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+        solutionBoard.rectangularGuessButtons[i].isRectBordered = true;
+        solutionBoard.rectangularGuessButtons[i].buttonCircle = CreateCircle(0,CreateVector2(0,0)); // Not A Circle
+        solutionBoard.rectangularGuessButtons[i].activeColor = WHITE;
+        solutionBoard.rectangularGuessButtons[i].inactiveColor = GRAY;
+        solutionBoard.rectangularGuessButtons[i].isActive = false;
+        solutionBoard.rectangularGuessButtons[i].text = 0;
+        solutionBoard.rectangularGuessButtons[i].fontsize = 0;
+        solutionBoard.rectangularGuessButtons[i].fontColor = BLACK;
+        solutionBoard.rectangularGuessButtons[i].textX = 0;
+        solutionBoard.rectangularGuessButtons[i].textY = 0;
+        solutionBoard.rectangularGuessButtons[i].guessColor = GetRandomValue(RED_GUESS, COUNT_GUESS-1);
+    }  
+    return solutionBoard;
+}
+
+Board InitializePlayableBoardSegment (int boardX, int boardWidth, int boardHeight, int i, int screenHeight)
+{
+    Board boardSegment;
+    for(int j = 0; j < 4; j++)
+    {
+        boardSegment.rectangularGuessButtons[j].shape = RECTANGLE;
+        boardSegment.rectangularGuessButtons[j].type = GUESS_INPUT;
+        boardSegment.rectangularGuessButtons[j].buttonRect = CreateRectangle(boardX + boardWidth/5*j, screenHeight - (i+1)*boardHeight, boardWidth/5, boardHeight);
+        boardSegment.rectangularGuessButtons[j].borderThicknessValue = 5;
+        boardSegment.rectangularGuessButtons[j].innerRect = CreateRectangle(boardSegment.rectangularGuessButtons[j].buttonRect.x + boardSegment.rectangularGuessButtons[j].borderThicknessValue, boardSegment.rectangularGuessButtons[j].buttonRect.y + boardSegment.rectangularGuessButtons[j].borderThicknessValue, boardSegment.rectangularGuessButtons[j].buttonRect.width - 2*boardSegment.rectangularGuessButtons[j].borderThicknessValue, boardSegment.rectangularGuessButtons[j].buttonRect.height - 2*boardSegment.rectangularGuessButtons[j].borderThicknessValue);
+        boardSegment.rectangularGuessButtons[j].isRectBordered = true;
+        boardSegment.rectangularGuessButtons[j].buttonCircle = CreateCircle(0,CreateVector2(0,0));
+        boardSegment.rectangularGuessButtons[j].activeColor = BLACK;
+        boardSegment.rectangularGuessButtons[j].inactiveColor = GRAY;
+        boardSegment.rectangularGuessButtons[j].isActive = false;
+        boardSegment.rectangularGuessButtons[j].text = 0;
+        boardSegment.rectangularGuessButtons[j].fontsize = 0;
+        boardSegment.rectangularGuessButtons[j].fontColor = BLACK;
+        boardSegment.rectangularGuessButtons[j].textX = 0;
+        boardSegment.rectangularGuessButtons[j].textY = 0;
+        boardSegment.rectangularGuessButtons[j].guessColor = EMPTY_GUESS;
+
+        int pegWidth = (boardWidth/5)/2;
+        int pegHeight = boardHeight/2;
+        for(int k = 0; k < 4; k++)
+        {
+            int pegX = boardX + boardWidth/5*4;
+            if(k % 2 == 1)
+            {
+                pegX += pegWidth;
+            }
+            int pegY = screenHeight - (i+1)*boardHeight;
+            if(k > 1)
+            {
+                pegY += pegHeight;
+            }
+            boardSegment.pegs[k].border = CreateRectangle(pegX, pegY, pegWidth, pegHeight);
+            boardSegment.pegs[k].borderColor = GRAY;
+            boardSegment.pegs[k].rect = CreateRectangle(pegX + pegWidth*5/100, pegY + pegHeight*5/100, pegWidth*9/10, pegHeight*9/10);
+            boardSegment.pegs[k].pegColor = PINK;
+
+        }
+
+    }
+    return boardSegment;
+}
 
 int main(void)
 {
@@ -219,6 +290,8 @@ int main(void)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 1400;
     const int screenHeight = 800;
+
+    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic screen manager");
 
     // Color selection box variables
     Rectangle colorSelectionBox = { 0.8*screenWidth,     // top left corner x
@@ -276,80 +349,20 @@ int main(void)
     int boardWidth = 0.6*screenWidth;
     int boardHeight = 1.0/(PLAYABLE_BOARD_SEGMENT_COUNT + 1)*screenHeight;
 
-    Board solutionBoard;
-    for(int i = 0; i < 4; i++)
-    {
-        solutionBoard.rectangularGuessButtons[i].shape = RECTANGLE;
-        solutionBoard.rectangularGuessButtons[i].type = GUESS_INPUT;
-        solutionBoard.rectangularGuessButtons[i].buttonRect = CreateRectangle(boardX +boardWidth/5*i, 0, boardWidth/5, boardHeight);
-        solutionBoard.rectangularGuessButtons[i].borderThicknessValue = 5;
-        solutionBoard.rectangularGuessButtons[i].innerRect = CreateRectangle(solutionBoard.rectangularGuessButtons[i].buttonRect.x + solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.y + solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.width - 2*solutionBoard.rectangularGuessButtons[i].borderThicknessValue, solutionBoard.rectangularGuessButtons[i].buttonRect.height - 2*solutionBoard.rectangularGuessButtons[i].borderThicknessValue);
-        solutionBoard.rectangularGuessButtons[i].isRectBordered = true;
-        solutionBoard.rectangularGuessButtons[i].buttonCircle = CreateCircle(0,CreateVector2(0,0)); // Not A Circle
-        solutionBoard.rectangularGuessButtons[i].activeColor = WHITE;
-        solutionBoard.rectangularGuessButtons[i].inactiveColor = GRAY;
-        solutionBoard.rectangularGuessButtons[i].isActive = false;
-        solutionBoard.rectangularGuessButtons[i].text = 0;
-        solutionBoard.rectangularGuessButtons[i].fontsize = 0;
-        solutionBoard.rectangularGuessButtons[i].fontColor = BLACK;
-        solutionBoard.rectangularGuessButtons[i].textX = 0;
-        solutionBoard.rectangularGuessButtons[i].textY = 0;
-        solutionBoard.rectangularGuessButtons[i].guessColor = i;
-    }
+    Board solutionBoard = InitializeSolutionBoard(boardX, boardWidth, boardHeight);
+    
     Board playableBoard[PLAYABLE_BOARD_SEGMENT_COUNT];
     for (int i = 0; i < PLAYABLE_BOARD_SEGMENT_COUNT; i++)
     {
-        Board boardSegment;
-        for(int j = 0; j < 4; j++)
-        {
-            boardSegment.rectangularGuessButtons[j].shape = RECTANGLE;
-            boardSegment.rectangularGuessButtons[j].type = GUESS_INPUT;
-            boardSegment.rectangularGuessButtons[j].buttonRect = CreateRectangle(boardX + boardWidth/5*j, screenHeight - (i+1)*boardHeight, boardWidth/5, boardHeight);
-            boardSegment.rectangularGuessButtons[j].borderThicknessValue = 5;
-            boardSegment.rectangularGuessButtons[j].innerRect = CreateRectangle(boardSegment.rectangularGuessButtons[j].buttonRect.x + boardSegment.rectangularGuessButtons[j].borderThicknessValue, boardSegment.rectangularGuessButtons[j].buttonRect.y + boardSegment.rectangularGuessButtons[j].borderThicknessValue, boardSegment.rectangularGuessButtons[j].buttonRect.width - 2*boardSegment.rectangularGuessButtons[j].borderThicknessValue, boardSegment.rectangularGuessButtons[j].buttonRect.height - 2*boardSegment.rectangularGuessButtons[j].borderThicknessValue);
-            boardSegment.rectangularGuessButtons[j].isRectBordered = true;
-            boardSegment.rectangularGuessButtons[j].buttonCircle = CreateCircle(0,CreateVector2(0,0));
-            boardSegment.rectangularGuessButtons[j].activeColor = BLACK;
-            boardSegment.rectangularGuessButtons[j].inactiveColor = GRAY;
-            boardSegment.rectangularGuessButtons[j].isActive = false;
-            boardSegment.rectangularGuessButtons[j].text = 0;
-            boardSegment.rectangularGuessButtons[j].fontsize = 0;
-            boardSegment.rectangularGuessButtons[j].fontColor = BLACK;
-            boardSegment.rectangularGuessButtons[j].textX = 0;
-            boardSegment.rectangularGuessButtons[j].textY = 0;
-            boardSegment.rectangularGuessButtons[j].guessColor = EMPTY_GUESS;
-
-            int pegWidth = (boardWidth/5)/2;
-            int pegHeight = boardHeight/2;
-            for(int k = 0; k < 4; k++)
-            {
-                int pegX = boardX + boardWidth/5*4;
-                if(k % 2 == 1)
-                {
-                    pegX += pegWidth;
-                }
-                int pegY = screenHeight - (i+1)*boardHeight;
-                if(k > 1)
-                {
-                    pegY += pegHeight;
-                }
-                boardSegment.pegs[k].border = CreateRectangle(pegX, pegY, pegWidth, pegHeight);
-                boardSegment.pegs[k].borderColor = GRAY;
-                boardSegment.pegs[k].rect = CreateRectangle(pegX + pegWidth*5/100, pegY + pegHeight*5/100, pegWidth*9/10, pegHeight*9/10);
-                boardSegment.pegs[k].pegColor = PINK;
-
-            }
-
-        }
-        playableBoard[i] = boardSegment;
+        
+        playableBoard[i] = InitializePlayableBoardSegment(boardX, boardWidth, boardHeight, i, screenHeight);
     }
 
     int activeBoardSegmentSelectionCount = 0;
     int turnCount = 0;
     bool gameOver = false;
     bool moveConfirmed = false;
-
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic screen manager");
+    bool playerWon = false;
 
     GameScreen currentScreen = LOGO;
 
@@ -376,7 +389,7 @@ int main(void)
                 // Wait for 2 seconds (120 frames) before jumping to TITLE screen
                 if (framesCounter > 0)
                 {
-                    currentScreen = GAMEPLAY;
+                    currentScreen = TITLE;
                 }
             } break;
             case TITLE:
@@ -581,8 +594,15 @@ int main(void)
                             }
                         }
                         i++;
+                        j = 0;
                     }
-
+                    if(redPegCount == 4)
+                    {
+                        gameOver = true;
+                        playerWon = true;
+                        
+                    }
+                    
                     // fill in the pegs on the active board segment
                     for(int i = 0; i < 4; i++)
                     {
@@ -599,6 +619,15 @@ int main(void)
                     }
                     turnCount++;
                     moveConfirmed = false;
+                    if(turnCount >= PLAYABLE_BOARD_SEGMENT_COUNT)
+                    {
+                        gameOver = true;
+                    }
+                }
+
+                if(gameOver)
+                {
+                    currentScreen = ENDING;
                 }
 
             } break;
@@ -609,6 +638,11 @@ int main(void)
                 // Press enter to return to TITLE screen
                 if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
                 {
+                    solutionBoard = InitializeSolutionBoard(boardX, boardWidth, boardHeight);
+                    for (int i = 0; i < PLAYABLE_BOARD_SEGMENT_COUNT; i++)
+                    {
+                        playableBoard[i] = InitializePlayableBoardSegment(boardX, boardWidth, boardHeight, i, screenHeight);
+                    }
                     currentScreen = TITLE;
                 }
             } break;
@@ -635,8 +669,7 @@ int main(void)
                 {
                     // TODO: Draw TITLE screen here!
                     DrawRectangle(0, 0, screenWidth, screenHeight, WHITE);
-                    DrawText("", 20, 20, 40, GREEN);
-                    DrawText("", 120, 220, 20, GREEN);
+                    DrawText("WELCOME TO MASTERMIND", 120, 220, 40, BLACK);
 
                 } break;
                 case GAMEPLAY:
@@ -675,10 +708,14 @@ int main(void)
                 {
                     // TODO: Draw ENDING screen here!
                     DrawRectangle(0, 0, screenWidth, screenHeight, WHITE);
-                    DrawText("", 20, 20, 40, BLUE);
-                    DrawText("", 120, 220, 20, BLUE);
-
-
+                    if(playerWon)
+                    {
+                        DrawText("CONGRADULATIONS! YOU WON! YOU'RE A SKIBIDI SIGMA! ", 120, 220, 40, BLACK);
+                    }
+                    else
+                    {
+                        DrawText("You Lost. Not Skibidi. ", 120, 220, 40, BLACK);
+                    }
                 } break;
                 default: break;
             }

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------------------
 // Types and Structures Definition
 //------------------------------------------------------------------------------------------
-#define PLAYABLE_BOARD_SEGMENT_COUNT 18
+#define PLAYABLE_BOARD_SEGMENT_COUNT 16
 
 typedef enum GameScreen {LOGO = 0, TITLE, GAMEPLAY, ENDING} GameScreen;
 typedef enum GuessColor {RED_GUESS = 0, ORANGE_GUESS, YELLOW_GUESS, GREEN_GUESS, BLUE_GUESS, PURPLE_GUESS, COUNT_GUESS, EMPTY_GUESS} GuessColor;
@@ -232,7 +232,7 @@ Board InitializeSolutionBoard (int boardX, int boardWidth, int boardHeight)
         solutionBoard.rectangularGuessButtons[i].fontColor = BLACK;
         solutionBoard.rectangularGuessButtons[i].textX = 0;
         solutionBoard.rectangularGuessButtons[i].textY = 0;
-        solutionBoard.rectangularGuessButtons[i].guessColor = GetRandomValue(RED_GUESS, COUNT_GUESS-1);
+        solutionBoard.rectangularGuessButtons[i].guessColor = GetRandomValue(RED_GUESS, COUNT_GUESS-1); //352
     }  
     return solutionBoard;
 }
@@ -586,6 +586,7 @@ int main(void)
                                 guessedColorsLength--;
                                 solutionColorsLength--;
                                 j = 0;
+                                i = 0;
                                 whitePegCount++;
                             }
                             else
